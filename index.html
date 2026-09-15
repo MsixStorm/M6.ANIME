@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M6ANIME</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #080808;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            text-align: center;
+            padding: 35px 15px 20px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 900;
+            color: #ff2f9e;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #ff2f9e;
+        }
+
+        .tagline {
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 650px;
+            margin: 25px auto;
+            gap: 10px;
+            padding: 0 15px;
+        }
+
+        #search {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #292929;
+            border-radius: 10px;
+            background: #151515;
+            color: white;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #search:focus {
+            border-color: #ff2f9e;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 0 22px;
+            background: #ff2f9e;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ff4bad;
+        }
+
+        .section-title {
+            max-width: 1200px;
+            margin: 30px auto 15px;
+            padding: 0 20px;
+            font-size: 25px;
+        }
+
+        #status {
+            text-align: center;
+            color: #999;
+            margin: 20px;
+        }
+
+        .grid {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px 40px;
+
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fill,
+                minmax(170px, 1fr)
+            );
+
+            gap: 18px;
+        }
+
+        .card {
+            background: #121212;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #222;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #ff2f9e;
+        }
+
+        .poster {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+            background: #202020;
+        }
+
+        .card-info {
+            padding: 12px;
+        }
+
+        .title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .meta {
+            color: #888;
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        #details {
+            display: none;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .back {
+            margin-bottom: 20px;
+            padding: 10px 18px;
+        }
+
+        .details-box {
+            display: flex;
+            gap: 25px;
+            background: #121212;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .details-poster {
+            width: 220px;
+            max-width: 35%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .description {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .episodes {
+            margin-top: 25px;
+        }
+
+        .episode {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 15px;
+            background: #202020;
+            border-radius: 8px;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+
+            .logo {
+                font-size: 38px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            button {
+                padding: 14px;
+            }
+
+            .details-box {
+                flex-direction: column;
+            }
+
+            .details-poster {
+                max-width: 200px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        M6ANIME
+    </div>
+
+    <div class="tagline">
+        Discover your next anime
+    </div>
+
+    <div class="search-box">
+
+        <input
+            id="search"
+            type="text"
+            placeholder="Search anime..."
+        >
+
+        <button onclick="searchAnime()">
+            Search
+        </button>
+
+    </div>
+
+</header>
+
+
+<div id="home">
+
+    <h2 class="section-title">
+        Popular Anime
+    </h2>
+
+    <div id="status">
+        Loading anime...
+    </div>
+
+    <div id="animeGrid" class="grid"></div>
+
+</div>
+
+
+<div id="details">
+
+    <button
+        class="back"
+        onclick="showHome()"
+    >
+        ← Back
+    </button>
+
+    <div id="detailsContent"></div>
+
+</div>
+
+
+<script>
+
+const API = "https://api.jikan.moe/v4";
+
+const grid =
+    document.getElementById("animeGrid");
+
+const statusText =
+    document.getElementById("status");
+
+
+// ==============================
+// API REQUEST
+// ==============================
+
+async function api(url) {
+
+    const response =
+        await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(
+            "API request failed"
+        );
+    }
+
+    return await response.json();
+}
+
+
+// ==============================
+// CREATE CARD
+// ==============================
+
+function createCard(anime) {
+
+    const card =
+        document.createElement("div");
+
+    card.className = "card";
+
+    const image =
+        anime.images?.jpg?.large_image_url ||
+        anime.images?.jpg?.image_url ||
+        "";
+
+    const title =
+        anime.title ||
+        anime.title_english ||
+        "Unknown Anime";
+
+    const year =
+        anime.year ||
+        anime.aired?.prop?.from?.year ||
+        "Unknown";
+
+    const score =
+        anime.score ||
+        "N/A";
+
+
+    card.innerHTML = `
+
+        <img
+            class="poster"
+            src="${image}"
+            loading="lazy"
+            alt="${title}"
+        >
+
+        <div class="card-info">
+
+            <div class="title">
+                ${title}
+            </div>
+
+            <div class="meta">
+                ⭐ ${score} • ${year}
+            </div>
+
+        </div>
+
+    `;
+
+
+    card.onclick =
+        () => showAnime(anime.mal_id);
+
+
+    return card;
+}
+
+
+// ==============================
+// LOAD POPULAR
+// ==============================
+
+async function loadPopular() {
+
+    statusText.textContent =
+        "Loading anime...";
+
+    try {
+
+        const result =
+            await api(
+                `${API}/top/anime?limit=24`
+            );
+
+        grid.innerHTML = "";
+
+        result.data.forEach(
+            anime => {
+
+                grid.appendChild(
+                    createCard(anime)
+                );
+
+            }
+        );
+
+        statusText.textContent =
+            `${result.data.length} anime loaded`;
+
+    }
+
+    catch (error) {
+
+        statusText.textContent =
+            "Couldn't load anime. Try again.";
+
+        console.error(error);
+
+    }
+}
+
+
+// ==============================
+// SEARCH
+// ==============================
+
+async function searchAnime() {
+
+    const query =
+        document
+            .getElementById("search")
+            .value
+            .trim();
+
+
+    if (!query) {
+
+        loadPopular();
+
+        return;
+
+    }
+
+
+    statusText.textContent =
+        "Searching...";
+
+    grid.innerHTML = "";
+
+
+    try {
+
+        const result =
+            await api(
+                `${API}/anime?q=${encodeURIComponent(query)}&limit=24`
+            );
+
+
+        if (
+            !result.data ||
+            result.data.length === 0
+        ) {
+
+            statusText.textContent =
+                "No anime found.";
+
+            return;
+
+        }
+
+
+        result.data.forEach(
+            anime => {
+
+                grid.appendChild(
+                    createCard(anime)
+                );
+
+            }
+        );
+
+
+        statusText.textContent =
+            `${result.data.length} results`;
+
+    }
+
+    catch (error) {
+
+        statusText.textContent =
+            "Search failed. Try again.";
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ==============================
+// ANIME DETAILS
+// ==============================
+
+async function showAnime(id) {
+
+    document.getElementById("home")
+        .style.display = "none";
+
+    document.getElementById("details")
+        .style.display = "block";
+
+
+    const content =
+        document.getElementById(
+            "detailsContent"
+        );
+
+
+    content.innerHTML =
+        "<p>Loading anime...</p>";
+
+
+    window.scrollTo(0, 0);
+
+
+    try {
+
+        const result =
+            await api(
+                `${API}/anime/${id}/full`
+            );
+
+
+        const anime =
+            result.data;
+
+
+        const image =
+            anime.images?.jpg
+                ?.large_image_url || "";
+
+
+        const title =
+            anime.title ||
+            "Unknown Anime";
+
+
+        const synopsis =
+            anime.synopsis ||
+            "No description available.";
+
+
+        const episodes =
+            anime.episodes ||
+            "Unknown";
+
+
+        const status =
+            anime.status ||
+            "Unknown";
+
+
+        const score =
+            anime.score ||
+            "N/A";
+
+
+        const type =
+            anime.type ||
+            "Unknown";
+
+
+        const studios =
+            anime.studios
+                ?.map(x => x.name)
+                .join(", ") ||
+            "Unknown";
+
+
+        // --------------------------
+        // STREAMING
+        // --------------------------
+
+        let streamingHTML =
+            "<p>No official streaming links listed.</p>";
+
+
+        if (
+            anime.streaming &&
+            anime.streaming.length > 0
+        ) {
+
+            streamingHTML =
+                anime.streaming
+                    .map(service => `
+
+                        <p>
+
+                            <a
+                                href="${service.url}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style="color:#ff2f9e"
+                            >
+                                Watch on
+                                ${service.name}
+                            </a>
+
+                        </p>
+
+                    `)
+                    .join("");
+
+        }
+
+
+        // --------------------------
+        // EPISODES
+        // --------------------------
+
+        let episodesHTML = "";
+
+
+        if (anime.episodes) {
+
+            episodesHTML = `
+
+                <div class="episodes">
+
+                    <h2>
+                        Episodes
+                    </h2>
+
+                    <p>
+                        This anime has
+                        ${anime.episodes}
+                        episodes.
+                    </p>
+
+                    <p style="color:#888">
+                        Episode availability
+                        depends on the official
+                        streaming service.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+        // --------------------------
+        // PAGE
+        // --------------------------
+
+        content.innerHTML = `
+
+            <div class="details-box">
+
+                <img
+                    class="details-poster"
+                    src="${image}"
+                    alt="${title}"
+                >
+
+                <div>
+
+                    <h1>
+                        ${title}
+                    </h1>
+
+                    <p>
+                        ⭐ ${score}
+                    </p>
+
+                    <p>
+                        🎬 Type:
+                        ${type}
+                    </p>
+
+                    <p>
+                        📺 Episodes:
+                        ${episodes}
+                    </p>
+
+                    <p>
+                        📅 Status:
+                        ${status}
+                    </p>
+
+                    <p>
+                        🏢 Studio:
+                        ${studios}
+                    </p>
+
+                    <p class="description">
+                        ${synopsis}
+                    </p>
+
+
+                    <h2>
+                        🇬🇧 English Sub / Dub
+                    </h2>
+
+                    <p style="color:#aaa">
+
+                        Subtitles and English dubs
+                        depend on the official
+                        streaming service and
+                        your region.
+
+                    </p>
+
+
+                    <h2>
+                        🔗 Official Streaming
+                    </h2>
+
+                    ${streamingHTML}
+
+                </div>
+
+            </div>
+
+
+            ${episodesHTML}
+
+        `;
+
+    }
+
+    catch (error) {
+
+        content.innerHTML = `
+
+            <h2>
+                Couldn't load this anime.
+            </h2>
+
+            <p>
+                Please try again.
+            </p>
+
+        `;
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ==============================
+// BACK
+// ==============================
+
+function showHome() {
+
+    document.getElementById("details")
+        .style.display = "none";
+
+    document.getElementById("home")
+        .style.display = "block";
+
+    window.scrollTo(0, 0);
+
+}
+
+
+// ==============================
+// ENTER TO SEARCH
+// ==============================
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                searchAnime();
+
+            }
+
+        }
+    );
+
+
+// ==============================
+// START
+// ==============================
+
+loadPopular();
+
+</script>
+
+</body>
+</html>
