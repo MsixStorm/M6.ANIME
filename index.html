@@ -48,8 +48,7 @@
             outline: none;
         }
 
-        #searchButton,
-        .pink-button {
+        #searchButton {
             border: none;
             border-radius: 10px;
             padding: 14px 20px;
@@ -59,8 +58,7 @@
             cursor: pointer;
         }
 
-        #searchButton:hover,
-        .pink-button:hover {
+        #searchButton:hover {
             background: #ff3da6;
         }
 
@@ -82,7 +80,8 @@
 
         .anime-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            grid-template-columns:
+                repeat(auto-fill, minmax(165px, 1fr));
             gap: 18px;
         }
 
@@ -127,18 +126,27 @@
             margin-top: 7px;
         }
 
-        .back-button {
+        .back-button,
+        .pink-button,
+        .load-more,
+        .watch-button {
             border: none;
             background: #ff1493;
             color: white;
             border-radius: 8px;
-            padding: 12px 18px;
+            padding: 11px 15px;
             cursor: pointer;
             font-weight: bold;
+        }
+
+        .back-button {
             margin-bottom: 20px;
         }
 
-        .back-button:hover {
+        .back-button:hover,
+        .pink-button:hover,
+        .load-more:hover,
+        .watch-button:hover {
             background: #ff3da6;
         }
 
@@ -199,7 +207,8 @@
 
         .season-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            grid-template-columns:
+                repeat(auto-fill, minmax(210px, 1fr));
             gap: 10px;
         }
 
@@ -236,7 +245,7 @@
             color: white;
         }
 
-        /* PLAYER */
+        /* M6 PLAYER */
 
         .player-box {
             background: #000;
@@ -246,14 +255,14 @@
         }
 
         .player-header {
-            padding: 14px 16px;
+            padding: 15px;
             background: #101010;
             border-bottom: 1px solid #282828;
         }
 
         .player-title {
-            color: white;
             font-weight: bold;
+            color: white;
         }
 
         .player-subtitle {
@@ -264,29 +273,33 @@
 
         #m6Video {
             width: 100%;
+            max-height: 70vh;
             display: block;
             background: #000;
-            max-height: 70vh;
         }
 
         .player-message {
-            padding: 35px 20px;
+            padding: 45px 20px;
             text-align: center;
             color: #888;
         }
 
         .player-note {
-            margin-top: 12px;
             color: #666;
             font-size: 12px;
+            margin-top: 10px;
         }
 
         .player-controls {
-            padding: 12px;
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            padding: 12px;
             background: #101010;
+        }
+
+        .player-controls button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
         }
 
         /* EPISODES */
@@ -310,8 +323,8 @@
             border-color: #ff1493;
         }
 
-        .episode-number-box {
-            min-width: 58px;
+        .episode-number {
+            min-width: 60px;
             text-align: center;
             color: #ff1493;
             font-weight: bold;
@@ -331,65 +344,9 @@
             margin-top: 6px;
         }
 
-        .watch-button {
-            border: none;
-            background: #ff1493;
-            color: white;
-            border-radius: 8px;
-            padding: 9px 13px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .watch-button:hover {
-            background: #ff3da6;
-        }
-
         .load-more {
             display: block;
             margin: 20px auto;
-            border: none;
-            background: #ff1493;
-            color: white;
-            border-radius: 9px;
-            padding: 13px 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .load-more:hover {
-            background: #ff3da6;
-        }
-
-        /* STREAMING */
-
-        .streaming {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .stream-link {
-            display: inline-block;
-            padding: 11px 15px;
-            border-radius: 8px;
-            background: #222;
-            color: white;
-            text-decoration: none;
-            border: 1px solid #333;
-        }
-
-        .stream-link:hover {
-            border-color: #ff1493;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 7px;
-            background: #222;
-            margin: 3px;
-            font-size: 13px;
         }
 
         .empty {
@@ -397,6 +354,7 @@
         }
 
         @media (max-width: 600px) {
+
             .logo {
                 font-size: 38px;
             }
@@ -418,12 +376,15 @@
             }
 
             .episode-card {
-                align-items: flex-start;
                 flex-wrap: wrap;
             }
 
             .watch-button {
                 width: 100%;
+            }
+
+            .player-controls {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -432,9 +393,13 @@
 <body>
 
 <header>
-    <div class="logo">M6ANIME</div>
+
+    <div class="logo">
+        M6ANIME
+    </div>
 
     <div class="search-box">
+
         <input
             id="searchInput"
             type="text"
@@ -444,8 +409,11 @@
         <button id="searchButton">
             Search
         </button>
+
     </div>
+
 </header>
+
 
 <main>
 
@@ -453,11 +421,19 @@
 
     <section id="homePage">
 
-        <h2>Popular Anime</h2>
+        <h2>
+            Popular Anime
+        </h2>
 
-        <div id="animeGrid" class="anime-grid"></div>
+        <div
+            id="animeGrid"
+            class="anime-grid"
+        ></div>
 
-        <div id="homeStatus" class="status">
+        <div
+            id="homeStatus"
+            class="status"
+        >
             Loading anime...
         </div>
 
@@ -472,8 +448,8 @@
     >
 
         <button
-            class="back-button"
             id="backButton"
+            class="back-button"
         >
             ← Back
         </button>
@@ -487,28 +463,30 @@
 
 <script>
 
-const API = "https://api.jikan.moe/v4";
+const API =
+    "https://api.jikan.moe/v4";
+
 
 /*
-    Add video URLs here ONLY for videos you own
-    or are authorized/licensed to stream.
+==================================================
+M6 VIDEO SOURCES
+==================================================
 
-    Format:
+Put ONLY videos you own or are authorized/licensed
+to stream here.
 
-    anime MAL ID:
-        episode number:
-            "video URL"
+Example:
 
-    Example:
+const VIDEO_SOURCES = {
+    123: {
+        1: "https://your-server.com/video1.mp4",
+        2: "https://your-server.com/video2.mp4"
+    }
+};
 
-    const VIDEO_SOURCES = {
-        123: {
-            1: "https://your-authorized-server.example/video1.mp4",
-            2: "https://your-authorized-server.example/video2.mp4"
-        }
-    };
+The number 123 would be the anime's MAL ID.
 
-    Leave it empty for now.
+Leave empty until you have authorized video sources.
 */
 
 const VIDEO_SOURCES = {};
@@ -517,17 +495,19 @@ const VIDEO_SOURCES = {};
 let currentAnime = null;
 
 let currentEpisodePage = 1;
+
 let currentEpisodeAnimeId = null;
 
 let loadedEpisodes = [];
+
 let currentEpisodeIndex = -1;
 
 let episodeLoading = false;
 
 
-/* =========================
+/* ==================================================
    ELEMENTS
-========================= */
+================================================== */
 
 const homePage =
     document.getElementById("homePage");
@@ -551,9 +531,9 @@ const backButton =
     document.getElementById("backButton");
 
 
-/* =========================
-   HELPERS
-========================= */
+/* ==================================================
+   HTML SAFETY
+================================================== */
 
 function escapeHTML(value) {
 
@@ -573,13 +553,18 @@ function escapeHTML(value) {
 }
 
 
+/* ==================================================
+   DATE
+================================================== */
+
 function formatDate(date) {
 
     if (!date) {
         return "Unknown";
     }
 
-    const d = new Date(date);
+    const d =
+        new Date(date);
 
     if (isNaN(d.getTime())) {
         return date;
@@ -589,13 +574,20 @@ function formatDate(date) {
 }
 
 
+/* ==================================================
+   API
+================================================== */
+
 async function apiFetch(url) {
 
-    const response = await fetch(url);
+    const response =
+        await fetch(url);
 
     if (!response.ok) {
+
         throw new Error(
-            "API error: " + response.status
+            "API error: " +
+            response.status
         );
     }
 
@@ -603,9 +595,9 @@ async function apiFetch(url) {
 }
 
 
-/* =========================
-   HOME
-========================= */
+/* ==================================================
+   LOAD POPULAR ANIME
+================================================== */
 
 async function loadPopularAnime() {
 
@@ -614,32 +606,42 @@ async function loadPopularAnime() {
     homeStatus.textContent =
         "Loading 24 anime...";
 
+
     try {
 
-        const result = await apiFetch(
-            `${API}/top/anime?limit=24`
-        );
+        const result =
+            await apiFetch(
+                `${API}/top/anime?limit=24`
+            );
+
 
         displayAnime(
             result.data || []
         );
 
+
         homeStatus.textContent =
             "Showing 24 anime for now.";
+
 
     } catch (error) {
 
         console.error(error);
 
         homeStatus.textContent =
-            "Could not load anime. Refresh and try again.";
+            "Could not load anime. Refresh the page.";
     }
 }
 
 
+/* ==================================================
+   DISPLAY ANIME
+================================================== */
+
 function displayAnime(animes) {
 
     animeGrid.innerHTML = "";
+
 
     if (!animes.length) {
 
@@ -656,6 +658,7 @@ function displayAnime(animes) {
 
         const card =
             document.createElement("div");
+
 
         card.className =
             "anime-card";
@@ -681,9 +684,12 @@ function displayAnime(animes) {
                 </div>
 
                 <div class="small-info">
-                    ${escapeHTML(anime.type || "Unknown")}
+                    ${escapeHTML(
+                        anime.type || "Unknown"
+                    )}
                     •
-                    ${anime.episodes ?? "?"} eps
+                    ${anime.episodes ?? "?"}
+                    eps
                 </div>
 
                 <div class="score">
@@ -705,9 +711,9 @@ function displayAnime(animes) {
 }
 
 
-/* =========================
+/* ==================================================
    SEARCH
-========================= */
+================================================== */
 
 async function searchAnime() {
 
@@ -731,9 +737,10 @@ async function searchAnime() {
 
     try {
 
-        const result = await apiFetch(
-            `${API}/anime?q=${encodeURIComponent(query)}&limit=24`
-        );
+        const result =
+            await apiFetch(
+                `${API}/anime?q=${encodeURIComponent(query)}&limit=24`
+            );
 
 
         displayAnime(
@@ -773,9 +780,9 @@ searchInput.addEventListener(
 );
 
 
-/* =========================
+/* ==================================================
    OPEN ANIME
-========================= */
+================================================== */
 
 async function openAnime(id) {
 
@@ -804,9 +811,10 @@ async function openAnime(id) {
 
     try {
 
-        const result = await apiFetch(
-            `${API}/anime/${id}/full`
-        );
+        const result =
+            await apiFetch(
+                `${API}/anime/${id}/full`
+            );
 
 
         currentAnime =
@@ -844,9 +852,9 @@ async function openAnime(id) {
 }
 
 
-/* =========================
-   DETAILS
-========================= */
+/* ==================================================
+   ANIME DETAILS
+================================================== */
 
 function renderAnimeDetails(anime) {
 
@@ -865,8 +873,11 @@ function renderAnimeDetails(anime) {
     const studios =
         anime.studios?.length
             ? anime.studios
-                .map(studio =>
-                    escapeHTML(studio.name)
+                .map(
+                    studio =>
+                        escapeHTML(
+                            studio.name
+                        )
                 )
                 .join(", ")
             : "Unknown";
@@ -875,13 +886,18 @@ function renderAnimeDetails(anime) {
     const genres =
         anime.genres?.length
             ? anime.genres
-                .map(genre =>
-                    `<span class="badge">
-                        ${escapeHTML(genre.name)}
-                    </span>`
+                .map(
+                    genre =>
+                        `<span class="badge">
+                            ${escapeHTML(
+                                genre.name
+                            )}
+                        </span>`
                 )
                 .join("")
-            : `<span class="empty">Unknown</span>`;
+            : `<span class="empty">
+                    Unknown
+               </span>`;
 
 
     container.innerHTML = `
@@ -900,31 +916,44 @@ function renderAnimeDetails(anime) {
                 <div class="details-info">
 
                     <div class="details-title">
-                        ${escapeHTML(anime.title)}
+                        ${escapeHTML(
+                            anime.title
+                        )}
                     </div>
 
 
                     <div class="meta">
 
                         <strong>Type:</strong>
-                        ${escapeHTML(anime.type || "Unknown")}
+                        ${escapeHTML(
+                            anime.type ||
+                            "Unknown"
+                        )}
                         <br>
 
                         <strong>Episodes:</strong>
-                        ${anime.episodes ?? "Unknown"}
+                        ${anime.episodes ??
+                            "Unknown"}
                         <br>
 
                         <strong>Status:</strong>
-                        ${escapeHTML(anime.status || "Unknown")}
+                        ${escapeHTML(
+                            anime.status ||
+                            "Unknown"
+                        )}
                         <br>
 
                         <strong>Season:</strong>
-                        ${escapeHTML(anime.season || "Unknown")}
-                        ${anime.year ? " " + anime.year : ""}
+                        ${escapeHTML(
+                            anime.season ||
+                            "Unknown"
+                        )}
+                        ${anime.year || ""}
                         <br>
 
                         <strong>Score:</strong>
-                        ⭐ ${anime.score ?? "N/A"}
+                        ⭐ ${anime.score ??
+                            "N/A"}
                         <br>
 
                         <strong>Studio:</strong>
@@ -958,13 +987,14 @@ function renderAnimeDetails(anime) {
             </div>
 
 
-            <!-- PLAYER -->
+            <!-- M6 PLAYER -->
 
             <div class="section">
 
                 <div class="section-title">
                     M6 Player
                 </div>
+
 
                 <div class="player-box">
 
@@ -977,11 +1007,12 @@ function renderAnimeDetails(anime) {
                             Select an episode
                         </div>
 
+
                         <div
                             id="playerSubtitle"
                             class="player-subtitle"
                         >
-                            M6 Player
+                            M6ANIME Player
                         </div>
 
                     </div>
@@ -1001,11 +1032,15 @@ function renderAnimeDetails(anime) {
                         class="player-message"
                     >
 
-                        Select an episode below.
+                        🎬 Select an episode
+                        below to use the M6 Player.
 
                         <div class="player-note">
-                            Video sources must be videos
-                            you own or are authorized to stream.
+
+                            No video is configured yet.
+                            Add an authorized video source
+                            to VIDEO_SOURCES when available.
+
                         </div>
 
                     </div>
@@ -1016,13 +1051,16 @@ function renderAnimeDetails(anime) {
                         <button
                             id="previousButton"
                             class="pink-button"
+                            disabled
                         >
                             ⏮ Previous
                         </button>
 
+
                         <button
                             id="nextButton"
                             class="pink-button"
+                            disabled
                         >
                             Next ⏭
                         </button>
@@ -1041,6 +1079,7 @@ function renderAnimeDetails(anime) {
                 <div class="section-title">
                     Series / Seasons
                 </div>
+
 
                 <div
                     id="seasonList"
@@ -1089,25 +1128,6 @@ function renderAnimeDetails(anime) {
 
             </div>
 
-
-            <!-- OFFICIAL STREAMING LINKS -->
-
-            <div class="section">
-
-                <div class="section-title">
-                    Official Streaming Links
-                </div>
-
-
-                <div
-                    id="streamingLinks"
-                    class="streaming"
-                >
-                    Loading...
-                </div>
-
-            </div>
-
         </div>
     `;
 
@@ -1119,11 +1139,11 @@ function renderAnimeDetails(anime) {
         true
     );
 
-    loadStreaming(anime);
-
 
     document
-        .getElementById("previousButton")
+        .getElementById(
+            "previousButton"
+        )
         .addEventListener(
             "click",
             playPreviousEpisode
@@ -1131,7 +1151,9 @@ function renderAnimeDetails(anime) {
 
 
     document
-        .getElementById("nextButton")
+        .getElementById(
+            "nextButton"
+        )
         .addEventListener(
             "click",
             playNextEpisode
@@ -1139,9 +1161,9 @@ function renderAnimeDetails(anime) {
 }
 
 
-/* =========================
+/* ==================================================
    SERIES / SEASONS
-========================= */
+================================================== */
 
 function loadSeriesEntries(anime) {
 
@@ -1154,32 +1176,22 @@ function loadSeriesEntries(anime) {
     container.innerHTML = "";
 
 
-    /*
-        Current anime
-    */
-
-    const currentButton =
+    const current =
         createSeriesButton(
             anime.mal_id,
             anime.title,
             anime.type || "Anime",
             anime.season
-                ? `${anime.season} ${anime.year || ""}`
+                ? `${anime.season} ${
+                    anime.year || ""
+                  }`
                 : "Current entry",
             true
         );
 
 
-    container.appendChild(
-        currentButton
-    );
+    container.appendChild(current);
 
-
-    /*
-        Related anime from Jikan.
-        Prequels, sequels, side stories,
-        parent stories, etc.
-    */
 
     const relations =
         anime.relations || [];
@@ -1201,7 +1213,8 @@ function loadSeriesEntries(anime) {
                 entry => {
 
                     if (
-                        entry.type !== "anime"
+                        entry.type !==
+                        "anime"
                     ) {
                         return;
                     }
@@ -1211,7 +1224,7 @@ function loadSeriesEntries(anime) {
                         createSeriesButton(
                             entry.mal_id,
                             entry.name,
-                            entry.type,
+                            "Anime",
                             relationName,
                             false
                         );
@@ -1231,13 +1244,15 @@ function loadSeriesEntries(anime) {
     ) {
 
         const note =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         note.className =
             "empty";
 
         note.textContent =
-            "No related entries were listed.";
+            "No related entries listed.";
 
         container.appendChild(note);
     }
@@ -1253,7 +1268,9 @@ function createSeriesButton(
 ) {
 
     const button =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
 
     button.className =
@@ -1261,7 +1278,9 @@ function createSeriesButton(
 
 
     if (active) {
-        button.classList.add("active");
+        button.classList.add(
+            "active"
+        );
     }
 
 
@@ -1289,9 +1308,9 @@ function createSeriesButton(
 }
 
 
-/* =========================
-   EPISODES
-========================= */
+/* ==================================================
+   LOAD EPISODES
+================================================== */
 
 async function loadEpisodes(
     animeId,
@@ -1374,11 +1393,9 @@ async function loadEpisodes(
         renderEpisodes();
 
 
-        const hasNext =
-            result.pagination?.has_next_page;
-
-
-        if (hasNext) {
+        if (
+            result.pagination?.has_next_page
+        ) {
 
             loadMore.style.display =
                 "block";
@@ -1411,7 +1428,7 @@ async function loadEpisodes(
         console.error(error);
 
         status.textContent =
-            "Episode list could not be loaded right now.";
+            "Could not load episodes right now.";
 
     } finally {
 
@@ -1420,9 +1437,9 @@ async function loadEpisodes(
 }
 
 
-/* =========================
+/* ==================================================
    RENDER EPISODES
-========================= */
+================================================== */
 
 function renderEpisodes() {
 
@@ -1440,24 +1457,38 @@ function renderEpisodes() {
     list.innerHTML = "";
 
 
+    if (!loadedEpisodes.length) {
+
+        list.innerHTML = `
+            <div class="empty">
+                No episode information available.
+            </div>
+        `;
+
+        return;
+    }
+
+
     loadedEpisodes.forEach(
         (episode, index) => {
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             card.className =
                 "episode-card";
 
 
-            const episodeNumber =
+            const number =
                 episode.mal_id;
 
 
             const title =
                 episode.title ||
-                `Episode ${episodeNumber}`;
+                `Episode ${number}`;
 
 
             const aired =
@@ -1465,22 +1496,13 @@ function renderEpisodes() {
                     ? formatDate(
                         episode.aired
                     )
-                    : "Air date unknown";
-
-
-            const hasVideo =
-                hasVideoSource(
-                    currentEpisodeAnimeId,
-                    episodeNumber
-                );
+                    : "Unknown";
 
 
             card.innerHTML = `
 
-                <div class="episode-number-box">
-                    EP ${escapeHTML(
-                        episodeNumber
-                    )}
+                <div class="episode-number">
+                    EP ${escapeHTML(number)}
                 </div>
 
 
@@ -1491,7 +1513,8 @@ function renderEpisodes() {
                     </div>
 
                     <div class="episode-date">
-                        Aired: ${escapeHTML(aired)}
+                        Aired:
+                        ${escapeHTML(aired)}
                     </div>
 
                 </div>
@@ -1499,11 +1522,8 @@ function renderEpisodes() {
 
                 <button
                     class="watch-button"
-                    data-index="${index}"
                 >
-                    ${hasVideo
-                        ? "▶ Watch"
-                        : "▶ M6 Player"}
+                    ▶ Play
                 </button>
             `;
 
@@ -1514,13 +1534,7 @@ function renderEpisodes() {
                 )
                 .addEventListener(
                     "click",
-                    () => {
-
-                        playEpisode(
-                            index
-                        );
-
-                    }
+                    () => playEpisode(index)
                 );
 
 
@@ -1530,9 +1544,9 @@ function renderEpisodes() {
 }
 
 
-/* =========================
-   LOAD MORE
-========================= */
+/* ==================================================
+   LOAD MORE BUTTON
+================================================== */
 
 document.addEventListener(
     "click",
@@ -1551,27 +1565,13 @@ document.addEventListener(
                 false
             );
         }
-
     }
 );
 
 
-/* =========================
+/* ==================================================
    VIDEO SOURCE
-========================= */
-
-function hasVideoSource(
-    animeId,
-    episodeNumber
-) {
-
-    return Boolean(
-        VIDEO_SOURCES?.[animeId]?.[
-            episodeNumber
-        ]
-    );
-}
-
+================================================== */
 
 function getVideoSource(
     animeId,
@@ -1586,9 +1586,9 @@ function getVideoSource(
 }
 
 
-/* =========================
-   M6 PLAYER
-========================= */
+/* ==================================================
+   PLAY EPISODE
+================================================== */
 
 function playEpisode(index) {
 
@@ -1606,6 +1606,10 @@ function playEpisode(index) {
 
     const episode =
         loadedEpisodes[index];
+
+
+    const number =
+        episode.mal_id;
 
 
     const video =
@@ -1632,12 +1636,8 @@ function playEpisode(index) {
         );
 
 
-    const episodeNumber =
-        episode.mal_id;
-
-
     title.textContent =
-        `Episode ${episodeNumber}: ${
+        `Episode ${number}: ${
             episode.title ||
             "Untitled"
         }`;
@@ -1651,7 +1651,7 @@ function playEpisode(index) {
     const source =
         getVideoSource(
             currentEpisodeAnimeId,
-            episodeNumber
+            number
         );
 
 
@@ -1675,20 +1675,26 @@ function playEpisode(index) {
 
         message.innerHTML = `
 
-            No video source is configured
-            for this episode.
+            🎬 Episode ${escapeHTML(number)}
+            selected.
 
             <div class="player-note">
-                Add an authorized video URL
-                to VIDEO_SOURCES in the
-                HTML code to play it.
+
+                This episode does not have a
+                video source configured yet.
+
+                <br><br>
+
+                M6 Player is ready for an
+                authorized video source.
+
             </div>
         `;
 
 
-        scrollToPlayer();
-
         updatePlayerButtons();
+
+        scrollToPlayer();
 
         return;
     }
@@ -1710,24 +1716,19 @@ function playEpisode(index) {
 
 
     video.play().catch(
-        () => {
-            /*
-                Browser may block autoplay.
-                The controls remain available.
-            */
-        }
+        () => {}
     );
 
 
-    scrollToPlayer();
-
     updatePlayerButtons();
+
+    scrollToPlayer();
 }
 
 
-/* =========================
+/* ==================================================
    PREVIOUS
-========================= */
+================================================== */
 
 function playPreviousEpisode() {
 
@@ -1744,15 +1745,14 @@ function playPreviousEpisode() {
 }
 
 
-/* =========================
+/* ==================================================
    NEXT
-========================= */
+================================================== */
 
 function playNextEpisode() {
 
     if (
-        currentEpisodeIndex ===
-            -1
+        currentEpisodeIndex < 0
     ) {
         return;
     }
@@ -1770,11 +1770,6 @@ function playNextEpisode() {
         return;
     }
 
-
-    /*
-        At the end of the currently loaded
-        page, load another page if one exists.
-    */
 
     const loadMore =
         document.getElementById(
@@ -1794,14 +1789,13 @@ function playNextEpisode() {
             currentEpisodeAnimeId,
             false
         );
-
     }
 }
 
 
-/* =========================
+/* ==================================================
    PLAYER BUTTONS
-========================= */
+================================================== */
 
 function updatePlayerButtons() {
 
@@ -1831,9 +1825,9 @@ function updatePlayerButtons() {
 }
 
 
-/* =========================
-   PLAYER SCROLL
-========================= */
+/* ==================================================
+   SCROLL TO PLAYER
+================================================== */
 
 function scrollToPlayer() {
 
@@ -1855,90 +1849,9 @@ function scrollToPlayer() {
 }
 
 
-/* =========================
-   STREAMING LINKS
-========================= */
-
-function loadStreaming(anime) {
-
-    const container =
-        document.getElementById(
-            "streamingLinks"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    const streaming =
-        anime.streaming || [];
-
-
-    if (!streaming.length) {
-
-        container.innerHTML = `
-
-            <div class="empty">
-                No official streaming links
-                were listed for this anime.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    streaming.forEach(
-        service => {
-
-            if (!service.url) {
-                return;
-            }
-
-
-            const link =
-                document.createElement(
-                    "a"
-                );
-
-
-            link.className =
-                "stream-link";
-
-
-            link.href =
-                service.url;
-
-
-            link.target =
-                "_blank";
-
-
-            link.rel =
-                "noopener noreferrer";
-
-
-            link.textContent =
-                service.name ||
-                "Official service";
-
-
-            container.appendChild(
-                link
-            );
-        }
-    );
-}
-
-
-/* =========================
-   BACK
-========================= */
+/* ==================================================
+   BACK HOME
+================================================== */
 
 backButton.addEventListener(
     "click",
@@ -1958,6 +1871,7 @@ backButton.addEventListener(
         detailsPage.style.display =
             "none";
 
+
         homePage.style.display =
             "block";
 
@@ -1970,9 +1884,9 @@ backButton.addEventListener(
 );
 
 
-/* =========================
-   START
-========================= */
+/* ==================================================
+   START M6ANIME
+================================================== */
 
 loadPopularAnime();
 
